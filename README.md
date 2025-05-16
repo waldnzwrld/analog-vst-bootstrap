@@ -1,4 +1,3 @@
-
 # Pedal Power - Guitar Pedal VST
 
 A VST plugin that emulates guitar pedal effects. Built with JUCE framework.
@@ -7,19 +6,28 @@ A VST plugin that emulates guitar pedal effects. Built with JUCE framework.
 
 - CMake (version 3.15 or higher)
 - C++17 compatible compiler
-- JUCE framework
+- Git
 - VST3 SDK
 
 ## Building the Project
 
-1. Clone this repository
-2. Install JUCE framework
-3. Run the following commands:
+1. Clone this repository with submodules:
 ```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
+git clone --recursive https://github.com/waldnzwrld/first-vst.git
+# Or if you've already cloned without --recursive:
+git submodule update --init --recursive
+```
+
+2. Build the project:
+```bash
+# Build the project
+make
+
+# Or for a clean rebuild
+make rebuild
+
+# To see all available commands
+make help
 ```
 
 ## Features
