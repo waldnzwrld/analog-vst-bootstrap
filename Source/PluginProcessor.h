@@ -29,6 +29,9 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
+    // Getter for parameters
+    juce::AudioProcessorValueTreeState& getParameters() { return parameters; }
+
 private:
     // Parameters
     juce::AudioProcessorValueTreeState parameters;
@@ -40,6 +43,9 @@ private:
     float drive = 1.0f;
     float tone = 0.5f;
     float level = 1.0f;
+
+    // Parameter layout creation
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PedalPowerAudioProcessor)
 }; 

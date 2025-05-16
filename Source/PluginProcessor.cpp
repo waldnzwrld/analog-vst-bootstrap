@@ -27,7 +27,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalPowerAudioProcessor::cr
     return { params.begin(), params.end() };
 }
 
-void PedalPowerAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void PedalPowerAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/)
 {
     // Initialize any resources needed for processing
 }
@@ -37,7 +37,7 @@ void PedalPowerAudioProcessor::releaseResources()
     // Free any resources that were allocated in prepareToPlay
 }
 
-void PedalPowerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void PedalPowerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
     juce::ScopedNoDenormals noDenormals;
     

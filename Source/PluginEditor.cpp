@@ -11,7 +11,7 @@ PedalPowerAudioProcessorEditor::PedalPowerAudioProcessorEditor(PedalPowerAudioPr
     driveSlider.setValue(1.0f);
     addAndMakeVisible(driveSlider);
     driveAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(
-        audioProcessor.parameters, "drive", driveSlider));
+        audioProcessor.getParameters(), "drive", driveSlider));
 
     // Set up tone slider
     toneSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
@@ -20,7 +20,7 @@ PedalPowerAudioProcessorEditor::PedalPowerAudioProcessorEditor(PedalPowerAudioPr
     toneSlider.setValue(0.5f);
     addAndMakeVisible(toneSlider);
     toneAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(
-        audioProcessor.parameters, "tone", toneSlider));
+        audioProcessor.getParameters(), "tone", toneSlider));
 
     // Set up level slider
     levelSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
@@ -29,7 +29,7 @@ PedalPowerAudioProcessorEditor::PedalPowerAudioProcessorEditor(PedalPowerAudioPr
     levelSlider.setValue(1.0f);
     addAndMakeVisible(levelSlider);
     levelAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(
-        audioProcessor.parameters, "level", levelSlider));
+        audioProcessor.getParameters(), "level", levelSlider));
 
     // Set up labels
     driveLabel.setText("Drive", juce::dontSendNotification);
@@ -69,7 +69,6 @@ void PedalPowerAudioProcessorEditor::resized()
     const int sliderWidth = 100;
     const int sliderHeight = 100;
     const int labelHeight = 20;
-    const int spacing = 20;
 
     // Drive control
     driveLabel.setBounds(area.getX(), area.getY(), sliderWidth, labelHeight);
