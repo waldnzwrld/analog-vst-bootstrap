@@ -1,5 +1,7 @@
 #include "Transistor.h"
 
+namespace ArchitextureStudiosAnalogCore {
+namespace Analog {
 Transistor::Transistor(Type type)
     : type(type)
     , beta(100.0f)    // Default current gain
@@ -42,3 +44,6 @@ float Transistor::calculateCollectorCurrent(float vbe, float vce)
     
     return ic;
 } 
+
+} // namespace Analog
+} // namespace ArchitextureStudiosAnalogCore

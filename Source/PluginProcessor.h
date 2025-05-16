@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Circuits/TransistorClipper.h"
 
 class ArchitextureStudiosAnalogCoreAudioProcessor : public juce::AudioProcessor
 {
@@ -8,9 +9,9 @@ public:
     ArchitextureStudiosAnalogCoreAudioProcessor();
     ~ArchitextureStudiosAnalogCoreAudioProcessor() override;
 
-    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
-    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
@@ -29,23 +30,15 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-    // Getter for parameters
     juce::AudioProcessorValueTreeState& getParameters() { return parameters; }
 
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
+
 private:
-    // Parameters
     juce::AudioProcessorValueTreeState parameters;
-    std::atomic<float>* driveParam = nullptr;
-    std::atomic<float>* toneParam = nullptr;
-    std::atomic<float>* levelParam = nullptr;
+    ArchitextureStudiosAnalogCore::TransistorClipper circuit;
 
-    // Audio processing variables
-    float drive = 1.0f;
-    float tone = 0.5f;
-    float level = 1.0f;
-
-    // Parameter layout creation
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArchitextureStudiosAnalogCoreAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ArchitextureStudiosAnalogCoreAudioProcessor)
 }; 

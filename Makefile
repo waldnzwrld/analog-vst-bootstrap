@@ -27,6 +27,7 @@ rebuild: clean build
 run: build
 	@./$(BUILD_DIR)/ArchitextureStudiosAnalogCore_artefacts/Standalone/ArchitextureStudiosAnalogCore.app/Contents/MacOS/ArchitextureStudiosAnalogCore
 
+
 # Help target
 help:
 	@echo "Available targets:"
@@ -36,6 +37,7 @@ help:
 	@echo "  clean      - Removes build directory"
 	@echo "  rebuild    - Cleans and rebuilds the project"
 	@echo "  run        - Runs the standalone version of the plugin"
+	@echo "  test       - Runs the test suite"
 	@echo "  help       - Shows this help message"
 
-.PHONY: all configure build clean rebuild run help 
+.PHONY: all configure build clean rebuild run help test 

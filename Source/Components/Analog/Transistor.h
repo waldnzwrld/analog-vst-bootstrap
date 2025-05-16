@@ -2,6 +2,9 @@
 
 #include <JuceHeader.h>
 
+namespace ArchitextureStudiosAnalogCore {
+namespace Analog {
+
 class Transistor
 {
 public:
@@ -38,4 +41,7 @@ private:
     float va;      // Early voltage
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Transistor)
-}; 
+};
+
+} // namespace Analog
+} // namespace ArchitextureStudiosAnalogCore 
