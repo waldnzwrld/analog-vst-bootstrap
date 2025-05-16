@@ -25,7 +25,7 @@ rebuild: clean build
 
 # Run the plugin (if built as standalone)
 run: build
-	@./$(BUILD_DIR)/PedalPower_artefacts/Standalone/PedalPower.app/Contents/MacOS/PedalPower
+	@./$(BUILD_DIR)/ArchitextureStudiosAnalogCore_artefacts/Standalone/ArchitextureStudiosAnalogCore.app/Contents/MacOS/ArchitextureStudiosAnalogCore
 
 # Help target
 help:
