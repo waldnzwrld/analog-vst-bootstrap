@@ -60,7 +60,7 @@ void PedalPowerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
             float output = std::tanh(input * drive);
             
             // Apply tone control (simple low-pass filter)
-            output = output * (1.0f - tone) + input * tone;
+            output = output * tone + input * (1.0f - tone);
             
             // Apply level
             output *= level;

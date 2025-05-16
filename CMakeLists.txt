@@ -5,8 +5,16 @@ project(PedalPower VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# use build caching
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+
 # Add JUCE as a subdirectory
 add_subdirectory(JUCE)
+
+# Cache the JUCE build so that compilation is faster
+set(JUCE_BUILD_DIR "${CMAKE_BINARY_DIR}/juce_build" CACHE PATH "JUCE build directory") 
 
 # Initialize JUCE
 juce_add_plugin(PedalPower
@@ -34,6 +42,13 @@ target_include_directories(PedalPower
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
+# Add JUCE module headers
+juce_generate_juce_header(PedalPower)
+
+# Disable precompiled headers for now as they're causing issues
+set_target_properties(PedalPower PROPERTIES
+    DISABLE_PRECOMPILE_HEADERS ON)
+
 # Link JUCE modules
 target_link_libraries(PedalPower
     PRIVATE
@@ -49,5 +64,3 @@ target_link_libraries(PedalPower
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
-# Add JUCE module headers
-juce_generate_juce_header(PedalPower) 

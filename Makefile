@@ -1,22 +1,20 @@
 # Build directory
 BUILD_DIR = build
 
-# Default target
-all: init-submodules build
+# Get number of CPU cores
+NUM_CORES := $(shell sysctl -n hw.ncpu)
 
-# Initialize and update submodules
-init-submodules:
-	@echo "Initializing submodules..."
-	@git submodule update --init --recursive
+# Default target
+all: build
 
 # Create build directory and run CMake
-configure: init-submodules
+configure:
 	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR) && cmake ..
 
 # Build the project
 build: configure
-	@cd $(BUILD_DIR) && cmake --build .
+	@cd $(BUILD_DIR) && cmake --build . -j$(NUM_CORES)
 
 # Clean build files
 clean:
@@ -29,22 +27,15 @@ rebuild: clean build
 run: build
 	@./$(BUILD_DIR)/PedalPower_artefacts/Standalone/PedalPower.app/Contents/MacOS/PedalPower
 
-# Update submodules to their latest versions
-update-submodules:
-	@echo "Updating submodules..."
-	@git submodule update --remote --merge
-
 # Help target
 help:
 	@echo "Available targets:"
-	@echo "  all              - Default target, builds the project"
-	@echo "  init-submodules  - Initialize and update submodules"
-	@echo "  configure        - Creates build directory and runs CMake"
-	@echo "  build           - Builds the project"
-	@echo "  clean           - Removes build directory"
-	@echo "  rebuild         - Cleans and rebuilds the project"
-	@echo "  run             - Runs the standalone version of the plugin"
-	@echo "  update-submodules - Updates all submodules to their latest versions"
-	@echo "  help            - Shows this help message"
+	@echo "  all        - Default target, builds the project"
+	@echo "  configure  - Creates build directory and runs CMake"
+	@echo "  build      - Builds the project"
+	@echo "  clean      - Removes build directory"
+	@echo "  rebuild    - Cleans and rebuilds the project"
+	@echo "  run        - Runs the standalone version of the plugin"
+	@echo "  help       - Shows this help message"
 
-.PHONY: all configure build clean rebuild run help init-submodules update-submodules 
+.PHONY: all configure build clean rebuild run help 
