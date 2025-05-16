@@ -38,6 +38,10 @@ private:
     juce::AudioProcessorValueTreeState parameters;
     ArchitextureStudiosAnalogCore::TransistorClipper circuit;
 
+    // Audio processing state
+    double currentSampleRate = 44100.0;
+    int currentBlockSize = 512;
+
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ArchitextureStudiosAnalogCoreAudioProcessor)

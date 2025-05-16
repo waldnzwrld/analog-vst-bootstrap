@@ -23,9 +23,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout ArchitextureStudiosAnalogCor
     return { params.begin(), params.end() };
 }
 
-void ArchitextureStudiosAnalogCoreAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/)
+void ArchitextureStudiosAnalogCoreAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
+    // Store the sample rate and block size
+    currentSampleRate = sampleRate;
+    currentBlockSize = samplesPerBlock;
+    
+    // Initialize the circuit with the new sample rate
     circuit.prepare(sampleRate);
+    
+    // Clear any existing state
+    circuit.reset();
 }
 
 void ArchitextureStudiosAnalogCoreAudioProcessor::releaseResources()
@@ -37,8 +45,13 @@ void ArchitextureStudiosAnalogCoreAudioProcessor::processBlock(juce::AudioBuffer
 {
     juce::ScopedNoDenormals noDenormals;
     
-    auto* driveParam = parameters.getRawParameterValue("drive");
-    circuit.setDrive(*driveParam);
+    // Get the drive parameter value
+    float drive = *parameters.getRawParameterValue("drive");
+    
+    // Update the circuit's drive setting
+    circuit.setDrive(drive);
+    
+    // Process the audio through the circuit
     circuit.processBlock(buffer);
 }
 

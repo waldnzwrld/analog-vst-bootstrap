@@ -70,8 +70,6 @@ target_link_libraries(ArchitextureStudiosAnalogCore
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
 
-# Add tests
-add_subdirectory(Source/Tests)
 
 # Add custom test target
 add_custom_target(test

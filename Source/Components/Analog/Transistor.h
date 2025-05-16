@@ -33,6 +33,9 @@ public:
     // Calculate collector current using Ebers-Moll model
     float calculateCollectorCurrent(float vbe, float vce);
 
+    // Calculate emitter current (Ic + Ib)
+    float calculateEmitterCurrent(float vbe, float vce);
+
 private:
     Type type;
     float beta;    // Current gain (hFE)
