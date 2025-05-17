@@ -21,24 +21,18 @@ double Diode::getCurrent(double voltage) const {
 }
 
 double Diode::getVoltage(double current) const {
-    // Solve for voltage using iterative method
-    // This is a simplified version - in practice, you might want to use
-    // a more sophisticated numerical method
     double vt = calculateThermalVoltage();
-    double v = 0.0;
-    const int maxIterations = 10;
     
-    for (int i = 0; i < maxIterations; ++i) {
-        double iCalc = calculateTotalCurrent(v);
-        double error = iCalc - current;
-        if (std::abs(error) < 1e-9) break;
-        
-        // Simple Newton-Raphson step
-        double di_dv = (is / (n * vt)) * std::exp(v / (n * vt));
-        v -= error / di_dv;
+    // For forward bias (positive current)
+    if (current > 0) {
+        // Solve Shockley equation for voltage
+        return n * vt * std::log(current / is + 1.0);
     }
-    
-    return v;
+    // For reverse bias (negative current)
+    else {
+        // Simplified reverse voltage calculation
+        return -0.7;  // Typical reverse voltage drop
+    }
 }
 
 void Diode::setTemperature(double temp) {
@@ -78,13 +72,21 @@ double Diode::calculateReverseCurrent(double voltage) const {
 }
 
 double Diode::calculateTotalCurrent(double voltage) const {
-    // Account for series resistance
-    double vd = voltage - rs * calculateForwardCurrent(voltage);
+    double vt = calculateThermalVoltage();
     
-    if (vd >= 0) {
-        return calculateForwardCurrent(vd);
-    } else {
-        return calculateReverseCurrent(vd);
+    // Forward bias
+    if (voltage > 0.7) {  // Typical forward voltage threshold
+        // Account for series resistance
+        double vd = voltage - 0.7;  // Subtract forward voltage drop
+        return vd / rs;  // Current limited by series resistance
+    }
+    // Reverse bias
+    else if (voltage < 0) {
+        return -is;  // Reverse saturation current
+    }
+    // Below threshold
+    else {
+        return 0.0;
     }
 }
 

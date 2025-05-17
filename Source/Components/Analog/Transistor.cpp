@@ -1,5 +1,7 @@
 #include "Transistor.h"
 
+namespace ArchitextureStudiosAnalogCore {
+namespace Analog {
 Transistor::Transistor(Type type)
     : type(type)
     , beta(100.0f)    // Default current gain
@@ -41,4 +43,15 @@ float Transistor::calculateCollectorCurrent(float vbe, float vce)
     float ic = beta * ib * (1.0f + vce / va);
     
     return ic;
-} 
+}
+
+float Transistor::calculateEmitterCurrent(float vbe, float vce)
+{
+    // Emitter current is collector current plus base current
+    float ic = calculateCollectorCurrent(vbe, vce);
+    float ib = ic / beta;  // Base current is collector current divided by beta
+    return ic + ib;  // Emitter current is sum of collector and base currents
+}
+
+} // namespace Analog
+} // namespace ArchitextureStudiosAnalogCore

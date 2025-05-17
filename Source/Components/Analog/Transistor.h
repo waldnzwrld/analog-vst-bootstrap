@@ -2,6 +2,9 @@
 
 #include <JuceHeader.h>
 
+namespace ArchitextureStudiosAnalogCore {
+namespace Analog {
+
 class Transistor
 {
 public:
@@ -30,6 +33,9 @@ public:
     // Calculate collector current using Ebers-Moll model
     float calculateCollectorCurrent(float vbe, float vce);
 
+    // Calculate emitter current (Ic + Ib)
+    float calculateEmitterCurrent(float vbe, float vce);
+
 private:
     Type type;
     float beta;    // Current gain (hFE)
@@ -38,4 +44,7 @@ private:
     float va;      // Early voltage
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Transistor)
-}; 
+};
+
+} // namespace Analog
+} // namespace ArchitextureStudiosAnalogCore 
