@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(PedalPower VERSION 1.0.0)
+project(ArchitextureStudiosAnalogCore VERSION 1.0.0)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -17,7 +17,7 @@ add_subdirectory(JUCE)
 set(JUCE_BUILD_DIR "${CMAKE_BINARY_DIR}/juce_build" CACHE PATH "JUCE build directory") 
 
 # Initialize JUCE
-juce_add_plugin(PedalPower
+juce_add_plugin(ArchitextureStudiosAnalogCore
     VERSION 1.0.0
     COMPANY_NAME "YourCompany"
     IS_SYNTH FALSE
@@ -32,25 +32,26 @@ juce_add_plugin(PedalPower
     PRODUCT_NAME "Pedal Power")
 
 # Add source files
-target_sources(PedalPower
+target_sources(ArchitextureStudiosAnalogCore
     PRIVATE
         Source/PluginProcessor.cpp
-        Source/PluginEditor.cpp)
+        Source/PluginEditor.cpp
+        Source/Components/Analog/Capacitor.cpp)
 
 # Set include directories
-target_include_directories(PedalPower
+target_include_directories(ArchitextureStudiosAnalogCore
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 # Add JUCE module headers
-juce_generate_juce_header(PedalPower)
+juce_generate_juce_header(ArchitextureStudiosAnalogCore)
 
 # Disable precompiled headers for now as they're causing issues
-set_target_properties(PedalPower PROPERTIES
+set_target_properties(ArchitextureStudiosAnalogCore PROPERTIES
     DISABLE_PRECOMPILE_HEADERS ON)
 
 # Link JUCE modules
-target_link_libraries(PedalPower
+target_link_libraries(ArchitextureStudiosAnalogCore
     PRIVATE
         juce::juce_audio_utils
         juce::juce_audio_processors

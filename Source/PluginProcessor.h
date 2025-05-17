@@ -2,11 +2,11 @@
 
 #include <JuceHeader.h>
 
-class PedalPowerAudioProcessor : public juce::AudioProcessor
+class ArchitextureStudiosAnalogCoreAudioProcessor : public juce::AudioProcessor
 {
 public:
-    PedalPowerAudioProcessor();
-    ~PedalPowerAudioProcessor() override;
+    ArchitextureStudiosAnalogCoreAudioProcessor();
+    ~ArchitextureStudiosAnalogCoreAudioProcessor() override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -47,5 +47,5 @@ private:
     // Parameter layout creation
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PedalPowerAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ArchitextureStudiosAnalogCoreAudioProcessor)
 }; 

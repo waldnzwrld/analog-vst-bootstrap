@@ -1,7 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-PedalPowerAudioProcessorEditor::PedalPowerAudioProcessorEditor(PedalPowerAudioProcessor& p)
+ArchitextureStudiosAnalogCoreAudioProcessorEditor::ArchitextureStudiosAnalogCoreAudioProcessorEditor(ArchitextureStudiosAnalogCoreAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
     // Set up drive slider
@@ -48,11 +48,11 @@ PedalPowerAudioProcessorEditor::PedalPowerAudioProcessorEditor(PedalPowerAudioPr
     setSize(400, 300);
 }
 
-PedalPowerAudioProcessorEditor::~PedalPowerAudioProcessorEditor()
+ArchitextureStudiosAnalogCoreAudioProcessorEditor::~ArchitextureStudiosAnalogCoreAudioProcessorEditor()
 {
 }
 
-void PedalPowerAudioProcessorEditor::paint(juce::Graphics& g)
+void ArchitextureStudiosAnalogCoreAudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
@@ -61,7 +61,7 @@ void PedalPowerAudioProcessorEditor::paint(juce::Graphics& g)
     g.drawText("Pedal Power", getLocalBounds(), juce::Justification::centredTop, true);
 }
 
-void PedalPowerAudioProcessorEditor::resized()
+void ArchitextureStudiosAnalogCoreAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds();
     area.removeFromTop(40); // Space for title

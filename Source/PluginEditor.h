@@ -3,17 +3,17 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 
-class PedalPowerAudioProcessorEditor : public juce::AudioProcessorEditor
+class ArchitextureStudiosAnalogCoreAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-    PedalPowerAudioProcessorEditor(PedalPowerAudioProcessor&);
-    ~PedalPowerAudioProcessorEditor() override;
+    ArchitextureStudiosAnalogCoreAudioProcessorEditor(ArchitextureStudiosAnalogCoreAudioProcessor&);
+    ~ArchitextureStudiosAnalogCoreAudioProcessorEditor() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-    PedalPowerAudioProcessor& audioProcessor;
+    ArchitextureStudiosAnalogCoreAudioProcessor& audioProcessor;
 
     juce::Slider driveSlider;
     juce::Slider toneSlider;
@@ -27,5 +27,5 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> toneAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> levelAttachment;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PedalPowerAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ArchitextureStudiosAnalogCoreAudioProcessorEditor)
 }; 

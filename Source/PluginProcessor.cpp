@@ -1,7 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-PedalPowerAudioProcessor::PedalPowerAudioProcessor()
+ArchitextureStudiosAnalogCoreAudioProcessor::ArchitextureStudiosAnalogCoreAudioProcessor()
     : AudioProcessor(BusesProperties()
         .withInput("Input", juce::AudioChannelSet::stereo(), true)
         .withOutput("Output", juce::AudioChannelSet::stereo(), true))
@@ -12,11 +12,11 @@ PedalPowerAudioProcessor::PedalPowerAudioProcessor()
     levelParam = parameters.getRawParameterValue("level");
 }
 
-PedalPowerAudioProcessor::~PedalPowerAudioProcessor()
+ArchitextureStudiosAnalogCoreAudioProcessor::~ArchitextureStudiosAnalogCoreAudioProcessor()
 {
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout PedalPowerAudioProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout ArchitextureStudiosAnalogCoreAudioProcessor::createParameterLayout()
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
@@ -27,17 +27,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout PedalPowerAudioProcessor::cr
     return { params.begin(), params.end() };
 }
 
-void PedalPowerAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/)
+void ArchitextureStudiosAnalogCoreAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/)
 {
     // Initialize any resources needed for processing
 }
 
-void PedalPowerAudioProcessor::releaseResources()
+void ArchitextureStudiosAnalogCoreAudioProcessor::releaseResources()
 {
     // Free any resources that were allocated in prepareToPlay
 }
 
-void PedalPowerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
+void ArchitextureStudiosAnalogCoreAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
     juce::ScopedNoDenormals noDenormals;
     
@@ -70,19 +70,19 @@ void PedalPowerAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     }
 }
 
-juce::AudioProcessorEditor* PedalPowerAudioProcessor::createEditor()
+juce::AudioProcessorEditor* ArchitextureStudiosAnalogCoreAudioProcessor::createEditor()
 {
     return new juce::GenericAudioProcessorEditor(*this);
 }
 
-void PedalPowerAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
+void ArchitextureStudiosAnalogCoreAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     auto state = parameters.copyState();
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
-void PedalPowerAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+void ArchitextureStudiosAnalogCoreAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
     if (xmlState.get() != nullptr)
@@ -92,5 +92,5 @@ void PedalPowerAudioProcessor::setStateInformation(const void* data, int sizeInB
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new PedalPowerAudioProcessor();
+    return new ArchitextureStudiosAnalogCoreAudioProcessor();
 } 

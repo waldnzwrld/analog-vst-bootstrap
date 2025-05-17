@@ -1,6 +1,8 @@
-# Pedal Power - Guitar Pedal VST
+# analog-vst-bootstrap
 
-A VST plugin that emulates guitar pedal effects. Built with JUCE framework.
+This is a base level framework for recreating analog style functionality within a VST using modeled variants of electronic components. 
+
+It is a starting point and a playground 
 
 ## Prerequisites
 
@@ -13,7 +15,7 @@ A VST plugin that emulates guitar pedal effects. Built with JUCE framework.
 
 1. Clone this repository with submodules:
 ```bash
-git clone --recursive https://github.com/waldnzwrld/first-vst.git
+git clone --recursive https://github.com/waldnzwrld/analog-vst-bootstrap.git
 # Or if you've already cloned without --recursive:
 git submodule update --init --recursive
 ```
