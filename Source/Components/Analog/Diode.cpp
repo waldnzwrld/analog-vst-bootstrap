@@ -30,8 +30,8 @@ double Diode::getVoltage(double current) const {
     }
     // For reverse bias (negative current)
     else {
-        // Simplified reverse voltage calculation
-        return -0.7;  // Typical reverse voltage drop
+        // More accurate reverse voltage calculation using Shockley equation
+        return n * vt * std::log(1.0 + current / is);
     }
 }
 
@@ -75,14 +75,17 @@ double Diode::calculateTotalCurrent(double voltage) const {
     double vt = calculateThermalVoltage();
     
     // Forward bias
-    if (voltage > 0.7) {  // Typical forward voltage threshold
+    if (voltage > 0) {
         // Account for series resistance
         double vd = voltage - 0.7;  // Subtract forward voltage drop
-        return vd / rs;  // Current limited by series resistance
+        if (vd > 0) {
+            return vd / rs;  // Current limited by series resistance
+        }
+        return calculateForwardCurrent(voltage);
     }
     // Reverse bias
     else if (voltage < 0) {
-        return -is;  // Reverse saturation current
+        return calculateReverseCurrent(voltage);
     }
     // Below threshold
     else {
