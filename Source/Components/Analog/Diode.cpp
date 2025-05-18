@@ -4,16 +4,24 @@
 namespace ArchitextureStudiosAnalogCore {
 namespace Analog {
 
-Diode::Diode(double is, double n, double rs, double temp) :
-    is(is),
-    n(n),
-    rs(rs),
-    temperature(temp)
+Diode::Diode(double is, double n, double rs, double temp,
+             double breakdown, double junctionCap, double transitTime)
+    : is(is)
+    , n(n)
+    , rs(rs)
+    , temperature(temp)
+    , breakdown(breakdown)
+    , junctionCap(junctionCap)
+    , transitTime(transitTime)
+    , lastVoltage(0.0)
+    , lastCurrent(0.0)
 {
 }
 
 double Diode::process(double voltage) {
-    return getCurrent(voltage);
+    lastVoltage = voltage;
+    lastCurrent = getCurrent(voltage);
+    return lastCurrent;
 }
 
 double Diode::getCurrent(double voltage) const {
@@ -51,8 +59,21 @@ void Diode::setSeriesResistance(double newRs) {
     rs = newRs;
 }
 
+void Diode::setBreakdownVoltage(double newBreakdown) {
+    breakdown = newBreakdown;
+}
+
+void Diode::setJunctionCapacitance(double newCap) {
+    junctionCap = newCap;
+}
+
+void Diode::setTransitTime(double newTime) {
+    transitTime = newTime;
+}
+
 void Diode::reset() {
-    // No state to reset in this model
+    lastVoltage = 0.0;
+    lastCurrent = 0.0;
 }
 
 double Diode::calculateThermalVoltage() const {
@@ -66,8 +87,12 @@ double Diode::calculateForwardCurrent(double voltage) const {
 }
 
 double Diode::calculateReverseCurrent(double voltage) const {
-    // Simplified reverse current model
-    // In practice, you might want to add breakdown effects
+    // Simplified reverse current model with breakdown
+    if (voltage < -breakdown) {
+        // Breakdown region - simplified model
+        return -is * (1.0 - std::exp(voltage / (n * calculateThermalVoltage()))) 
+               * (1.0 + (voltage + breakdown) / breakdown);
+    }
     return -is * (1.0 - std::exp(voltage / (n * calculateThermalVoltage())));
 }
 
@@ -86,6 +111,18 @@ double Diode::calculateTotalCurrent(double voltage) const {
     }
     
     return current;
+}
+
+double Diode::calculateJunctionCapacitance(double voltage) const {
+    // Junction capacitance varies with reverse bias
+    if (voltage < 0) {
+        // Reverse bias - junction capacitance decreases
+        return junctionCap / std::sqrt(1.0 - voltage / breakdown);
+    } else {
+        // Forward bias - diffusion capacitance dominates
+        double current = calculateForwardCurrent(voltage);
+        return junctionCap + (transitTime * current) / calculateThermalVoltage();
+    }
 }
 
 } // namespace Analog
