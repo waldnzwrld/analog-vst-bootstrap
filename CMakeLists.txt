@@ -60,6 +60,7 @@ target_link_libraries(ArchitextureStudiosAnalogCore
     PRIVATE
         juce::juce_audio_utils
         juce::juce_audio_processors
+        juce::juce_audio_basics
         juce::juce_core
         juce::juce_data_structures
         juce::juce_events

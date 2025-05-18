@@ -32,7 +32,7 @@ void ArchitextureStudiosAnalogCoreAudioProcessorEditor::paint(juce::Graphics& g)
 
     g.setColour(juce::Colours::white);
     g.setFont(20.0f);
-    g.drawText("Transistor Clipper", getLocalBounds(), juce::Justification::centredTop, true);
+    g.drawText("BassFukz", getLocalBounds(), juce::Justification::centredTop, true);
 }
 
 void ArchitextureStudiosAnalogCoreAudioProcessorEditor::resized()
