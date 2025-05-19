@@ -10,7 +10,7 @@ TransistorClipper::TransistorClipper()
     , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
     , biasResistor(BIAS_RESISTANCE)
     , outputCap(OUTPUT_CAP)
-    , drivePot(100000.0)  // 100k pot
+    , drivePot(100000.0, 0.5, ArchitextureStudiosAnalogCore::Analog::Potentiometer::TaperType::Logarithmic)  // 100k log pot
     , sampleRate(44100.0)
     , lastInputSample(0.0)
     , lastOutputSample(0.0)
