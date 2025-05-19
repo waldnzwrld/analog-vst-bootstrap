@@ -4,12 +4,12 @@
 namespace ArchitextureStudiosAnalogCore {
 
 TransistorClipper::TransistorClipper()
-    : inputCap(INPUT_CAP, 0.25, 2.5e-9, TEMPERATURE)  // 250mΩ ESR, 2.5nH ESL, 20°C
-    , diode(1e-12, 1.0, 0.1, TEMPERATURE, 100.0, 1e-12, 1e-9)  // 1N914 parameters
+    : inputCap(ArchitextureStudiosAnalogCore::Analog::Capacitor::Type::Film, INPUT_CAP, TEMPERATURE)  // Film cap, 0.056µF
+    , diode(ArchitextureStudiosAnalogCore::Analog::Diode::Type::Silicon, TEMPERATURE)  // 1N914 parameters
     , transistor1(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
     , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
     , biasResistor(BIAS_RESISTANCE, 0.0039, 0.25, 0.5e-12, 0.1e-9)  // Carbon film resistor parameters
-    , outputCap(OUTPUT_CAP, 0.3, 3.0e-9, TEMPERATURE)  // 300mΩ ESR, 3nH ESL, 20°C
+    , outputCap(ArchitextureStudiosAnalogCore::Analog::Capacitor::Type::Film, OUTPUT_CAP, TEMPERATURE)  // Film cap, 0.047µF
     , drivePot(100000.0, 0.5, ArchitextureStudiosAnalogCore::Analog::Potentiometer::TaperType::Logarithmic)  // 100k log pot
     , sampleRate(44100.0)
     , lastInputSample(0.0)

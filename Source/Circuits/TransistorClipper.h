@@ -35,8 +35,8 @@ private:
     // Circuit constants
     static constexpr double VCC = 9.0;           // Supply voltage
     static constexpr double BIAS_RESISTANCE = 10000.0;  // 10k bias resistor
-    static constexpr double INPUT_CAP = 0.056e-6;  // 0.056µF input capacitor
-    static constexpr double OUTPUT_CAP = 0.047e-6; // 0.047µF output capacitor
+    static constexpr double INPUT_CAP = 0.047e-6;  // 0.047µF input capacitor
+    static constexpr double OUTPUT_CAP = 0.056e-6; // 0.056µF output capacitor
     static constexpr double TEMPERATURE = 293.15; // 20°C
 
     // State variables
