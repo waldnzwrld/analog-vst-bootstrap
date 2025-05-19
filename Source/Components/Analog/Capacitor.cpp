@@ -1,5 +1,6 @@
 #include "Capacitor.h"
 #include <algorithm>  // For std::clamp
+#include <cmath>
 
 namespace ArchitextureStudiosAnalogCore {
 namespace Analog {
@@ -219,9 +220,19 @@ double Capacitor::process(double inputVoltage) {
     double tempAdjustedCap = calculateTemperatureAdjustedCapacitance();
     double tempAdjustedESR = calculateTemperatureAdjustedESR();
     
-    // Calculate current using I = C * dV/dt
-    // Using backward Euler method for numerical integration
-    double current = tempAdjustedCap * (inputVoltage - lastVoltage) / dt;
+    // Calculate frequency from rate of change
+    double frequency = std::abs(inputVoltage - lastVoltage) / (2.0 * M_PI * dt);
+    frequency = std::max(20.0, std::min(frequency, characteristics.maxFrequency)); // Limit to audible range
+    
+    // Calculate capacitive reactance
+    double xc = 1.0 / (2.0 * M_PI * frequency * tempAdjustedCap);
+    
+    // Calculate total impedance (including ESR and ESL)
+    double xl = 2.0 * M_PI * frequency * esl; // Inductive reactance
+    double totalImpedance = std::sqrt(std::pow(xc, 2) + std::pow(tempAdjustedESR, 2) + std::pow(xl, 2));
+    
+    // Calculate current using total impedance
+    current = (inputVoltage - lastVoltage) / totalImpedance;
     
     // Check current limit
     if (!checkCurrentLimit(current)) {
@@ -230,30 +241,29 @@ double Capacitor::process(double inputVoltage) {
     
     // Check polarity for polarized capacitors
     if (!checkPolarity(inputVoltage)) {
-        // For polarized capacitors, limit reverse voltage to a small value
         inputVoltage = -0.1;  // Small reverse voltage to prevent damage
     }
     
-    // Calculate frequency from rate of change
-    double frequency = std::abs(current) / (2.0 * M_PI * tempAdjustedCap * std::abs(inputVoltage - lastVoltage));
-    
-    // Check frequency range
-    if (!checkFrequencyRange(frequency)) {
-        // If frequency is out of range, limit the current
-        current *= characteristics.maxFrequency / frequency;
-    }
-    
-    // Add ESL effect: V = L * dI/dt
-    double eslVoltage = esl * (current - lastCurrent) / dt;
-    
-    // Add ESR effect: V = I * R (using temperature-adjusted ESR)
+    // Calculate voltage drop across each component
     double esrVoltage = current * tempAdjustedESR;
+    double eslVoltage = esl * (current - lastCurrent) / dt;
+    double xcVoltage = current * xc;
     
     // Calculate dielectric absorption voltage
     double daVoltage = calculateDielectricAbsorptionVoltage();
     
     // Update voltage across capacitor including all effects
-    voltage = lastVoltage + (current * dt / tempAdjustedCap) + eslVoltage + esrVoltage + daVoltage;
+    // The voltage across the capacitor is the sum of all voltage drops
+    voltage = lastVoltage + xcVoltage + esrVoltage + eslVoltage + daVoltage;
+    
+    // Apply frequency-dependent attenuation
+    // This helps model the real-world behavior where higher frequencies are attenuated more
+    double attenuation = 1.0;
+    if (frequency > 1000.0) { // Start attenuating above 1kHz
+        double freqRatio = frequency / 1000.0;
+        attenuation = 1.0 / (1.0 + 0.1 * std::log10(freqRatio)); // Logarithmic attenuation
+    }
+    voltage *= attenuation;
     
     // Update DA voltages for next iteration
     updateDAVoltages(voltage);
