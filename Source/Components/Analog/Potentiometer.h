@@ -20,9 +20,9 @@ public:
     void setPosition(double newPosition);
     double getPosition() const { return position; }
     
+
     void setTaperType(TaperType newTaper) { taperType = newTaper; }
     TaperType getTaperType() const { return taperType; }
-    
     // Get resistance between wiper and terminal 1
     double getResistance1() const;
     

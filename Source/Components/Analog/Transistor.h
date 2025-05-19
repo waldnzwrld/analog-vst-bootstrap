@@ -68,7 +68,7 @@ public:
 
     // Reset state
     void reset();
-
+  
 private:
     Type type;
     float beta;    // Current gain (hFE)
