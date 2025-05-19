@@ -29,7 +29,7 @@ juce_add_plugin(ArchitextureStudiosAnalogCore
     PLUGIN_MANUFACTURER_CODE Ycom
     PLUGIN_CODE Pdp1
     FORMATS VST3
-    PRODUCT_NAME "Bass Fuss")
+    PRODUCT_NAME "Bass Fukz")
 
 # Add source files
 target_sources(ArchitextureStudiosAnalogCore

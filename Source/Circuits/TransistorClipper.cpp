@@ -5,9 +5,9 @@ namespace ArchitextureStudiosAnalogCore {
 
 TransistorClipper::TransistorClipper()
     : inputCap(INPUT_CAP)
-    , diode()
-    , transistor1(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN)
-    , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN)
+    , diode(1e-12, 1.0, 0.1, 293.15, 100.0, 1e-12, 1e-9)  // 1N914 parameters
+    , transistor1(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
+    , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
     , biasResistor(BIAS_RESISTANCE)
     , outputCap(OUTPUT_CAP)
     , drivePot(100000.0)  // 100k pot
@@ -16,7 +16,7 @@ TransistorClipper::TransistorClipper()
     , lastOutputSample(0.0)
 {
     drivePot.setPosition(0.5f);  // Center position
-    juce::Logger::writeToLog("TransistorClipper initialized with default settings");
+    juce::Logger::writeToLog("TransistorClipper initialized with 2N5088 transistors and 1N914 diode");
 }
 
 void TransistorClipper::prepare(double newSampleRate)
