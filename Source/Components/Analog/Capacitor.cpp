@@ -15,7 +15,11 @@ void Capacitor::initializeCharacteristics() {
                 0.002,   // Temp coef ESR (0.2%/°C)
                 400.0,   // Max voltage (400V typical)
                 233.15,  // Min temp (-40°C)
-                373.15   // Max temp (100°C)
+                373.15,  // Max temp (100°C)
+                0.1,     // Max current (100mA)
+                0.1,     // Min frequency (0.1Hz)
+                1e6,     // Max frequency (1MHz)
+                false    // Not polarized
             };
             break;
             
@@ -28,7 +32,11 @@ void Capacitor::initializeCharacteristics() {
                 0.001,   // Temp coef ESR (0.1%/°C)
                 50.0,    // Max voltage (50V typical)
                 233.15,  // Min temp (-40°C)
-                398.15   // Max temp (125°C)
+                398.15,  // Max temp (125°C)
+                0.5,     // Max current (500mA)
+                0.1,     // Min frequency (0.1Hz)
+                1e9,     // Max frequency (1GHz)
+                false    // Not polarized
             };
             break;
             
@@ -41,7 +49,11 @@ void Capacitor::initializeCharacteristics() {
                 0.005,   // Temp coef ESR (0.5%/°C)
                 16.0,    // Max voltage (16V typical)
                 233.15,  // Min temp (-40°C)
-                358.15   // Max temp (85°C)
+                358.15,  // Max temp (85°C)
+                1.0,     // Max current (1A)
+                0.1,     // Min frequency (0.1Hz)
+                1e5,     // Max frequency (100kHz)
+                true     // Polarized
             };
             break;
             
@@ -54,7 +66,11 @@ void Capacitor::initializeCharacteristics() {
                 0.001,   // Temp coef ESR (0.1%/°C)
                 500.0,   // Max voltage (500V typical)
                 233.15,  // Min temp (-40°C)
-                398.15   // Max temp (125°C)
+                398.15,  // Max temp (125°C)
+                0.2,     // Max current (200mA)
+                0.1,     // Min frequency (0.1Hz)
+                1e8,     // Max frequency (100MHz)
+                false    // Not polarized
             };
             break;
             
@@ -67,7 +83,11 @@ void Capacitor::initializeCharacteristics() {
                 0.003,   // Temp coef ESR (0.3%/°C)
                 600.0,   // Max voltage (600V typical)
                 233.15,  // Min temp (-40°C)
-                373.15   // Max temp (100°C)
+                373.15,  // Max temp (100°C)
+                0.05,    // Max current (50mA)
+                0.1,     // Min frequency (0.1Hz)
+                1e5,     // Max frequency (100kHz)
+                false    // Not polarized
             };
             break;
             
@@ -178,6 +198,22 @@ void Capacitor::setSampleRate(double newSampleRate) {
     dt = 1.0 / sampleRate;
 }
 
+bool Capacitor::checkFrequencyRange(double frequency) const {
+    return frequency >= characteristics.minFrequency && 
+           frequency <= characteristics.maxFrequency;
+}
+
+bool Capacitor::checkCurrentLimit(double current) const {
+    return std::abs(current) <= characteristics.maxCurrent;
+}
+
+bool Capacitor::checkPolarity(double voltage) const {
+    if (!characteristics.isPolarized) {
+        return true;  // Non-polarized capacitors can handle any polarity
+    }
+    return voltage >= 0.0;  // Polarized capacitors must have positive voltage
+}
+
 double Capacitor::process(double inputVoltage) {
     // Get temperature-adjusted values
     double tempAdjustedCap = calculateTemperatureAdjustedCapacitance();
@@ -186,6 +222,26 @@ double Capacitor::process(double inputVoltage) {
     // Calculate current using I = C * dV/dt
     // Using backward Euler method for numerical integration
     double current = tempAdjustedCap * (inputVoltage - lastVoltage) / dt;
+    
+    // Check current limit
+    if (!checkCurrentLimit(current)) {
+        current = (current > 0) ? characteristics.maxCurrent : -characteristics.maxCurrent;
+    }
+    
+    // Check polarity for polarized capacitors
+    if (!checkPolarity(inputVoltage)) {
+        // For polarized capacitors, limit reverse voltage to a small value
+        inputVoltage = -0.1;  // Small reverse voltage to prevent damage
+    }
+    
+    // Calculate frequency from rate of change
+    double frequency = std::abs(current) / (2.0 * M_PI * tempAdjustedCap * std::abs(inputVoltage - lastVoltage));
+    
+    // Check frequency range
+    if (!checkFrequencyRange(frequency)) {
+        // If frequency is out of range, limit the current
+        current *= characteristics.maxFrequency / frequency;
+    }
     
     // Add ESL effect: V = L * dI/dt
     double eslVoltage = esl * (current - lastCurrent) / dt;

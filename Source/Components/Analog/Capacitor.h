@@ -27,6 +27,10 @@ public:
         double maxVoltage;           // Maximum voltage rating
         double minTemp;              // Minimum operating temperature (K)
         double maxTemp;              // Maximum operating temperature (K)
+        double maxCurrent;           // Maximum current rating (A)
+        double minFrequency;         // Minimum operating frequency (Hz)
+        double maxFrequency;         // Maximum operating frequency (Hz)
+        bool isPolarized;            // Whether the capacitor is polarized
     };
 
     Capacitor(Type type = Type::Film, double capValue = 1e-6, double temp = 293.15);
@@ -51,6 +55,11 @@ public:
     double getTemperature() const { return temperature; }
     Type getType() const { return type; }
     const Characteristics& getCharacteristics() const { return characteristics; }
+    double getCurrent() const { return current; }
+    double getMaxCurrent() const { return characteristics.maxCurrent; }
+    double getMinFrequency() const { return characteristics.minFrequency; }
+    double getMaxFrequency() const { return characteristics.maxFrequency; }
+    bool isPolarized() const { return characteristics.isPolarized; }
     
     // Set sample rate
     void setSampleRate(double newSampleRate);
@@ -77,6 +86,7 @@ private:
     double voltage;     // Current voltage across capacitor
     double lastVoltage; // Previous voltage for numerical integration
     double lastCurrent; // Previous current for ESL calculation
+    double current;     // Current current through capacitor
     double sampleRate;  // System sample rate
     double dt;         // Time step (1/sampleRate)
     
@@ -98,6 +108,9 @@ private:
     double calculateTemperatureAdjustedESR() const;
     double calculateDielectricAbsorptionVoltage() const;
     void updateDAVoltages(double newVoltage);
+    bool checkFrequencyRange(double frequency) const;
+    bool checkCurrentLimit(double current) const;
+    bool checkPolarity(double voltage) const;
 };
 
 } // namespace Analog
