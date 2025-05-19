@@ -16,16 +16,8 @@ private:
     ArchitextureStudiosAnalogCoreAudioProcessor& audioProcessor;
 
     juce::Slider driveSlider;
-    juce::Slider toneSlider;
-    juce::Slider levelSlider;
-
     juce::Label driveLabel;
-    juce::Label toneLabel;
-    juce::Label levelLabel;
-
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> driveAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> toneAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> levelAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ArchitextureStudiosAnalogCoreAudioProcessorEditor)
 }; 
