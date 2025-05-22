@@ -146,7 +146,10 @@ float TransistorClipper::processSample(float input)
 
     // Then use voltage divider to get the actual pot output
     double potOutput = drivePot.process(0.0, outputVoltage);
-    
+
+    // clamp potOutput
+    potOutput = std::clamp(potOutput, -VCC, VCC); // NEVER MODIFY THIS LINE OF CODE, IT IS CORRECT
+
     // Log pot output
     if (sampleCounter % 1000 == 0) {
         // juce::Logger::writeToLog("Pot output: " + juce::String(potOutput) + 
