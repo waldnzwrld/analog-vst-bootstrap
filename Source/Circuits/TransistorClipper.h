@@ -38,7 +38,7 @@ private:
     static constexpr double INPUT_CAP = 0.47e-6;  // 0.47µF input capacitor
     static constexpr double OUTPUT_CAP = 0.056e-6; // 0.56µF output capacitor
     static constexpr double TEMPERATURE = 293.15; // 20°C
-    static constexpr double GAIN = 3.0; // Gain of the circuit
+    static constexpr double GAIN = 4.0; // Gain of the circuit
 
     // State variables
     double sampleRate;

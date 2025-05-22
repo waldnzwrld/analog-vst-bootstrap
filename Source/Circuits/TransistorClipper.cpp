@@ -74,19 +74,19 @@ float TransistorClipper::processSample(float input)
     // Process through input capacitor with frequency
     double capVoltage = inputCap.process(amplifiedInput, frequency);
     
-    // Process through diode
-    double diodeCurrent = diode.process(capVoltage);
-    double diodeVoltage = diode.getVoltage(diodeCurrent);
+    // Process through diode (now reverse biased)
+    double diodeCurrent = diode.process(-capVoltage);  // Negative voltage for reverse bias
+    double diodeVoltage = -diode.getVoltage(diodeCurrent);  // Invert the voltage
     
-    // Calculate bias current
-    double biasCurrent = (VCC - diodeVoltage) / BIAS_RESISTANCE;
+    // Calculate bias current (adjusted for reverse bias)
+    double biasCurrent = (VCC + diodeVoltage) / BIAS_RESISTANCE;
     
     // Calculate collector voltages
     double vce2 = VCC - (biasCurrent * BIAS_RESISTANCE);
     double vce1 = VCC - (biasCurrent * BIAS_RESISTANCE);
     
     // Process transistors
-    double vbe2 = diodeVoltage + capVoltage;
+    double vbe2 = diodeVoltage + capVoltage;  // Base-emitter voltage for Q2
     double transistor2Current = transistor2.calculateCollectorCurrent(vbe2, vce2);
     double transistor2EmitterCurrent = transistor2.calculateEmitterCurrent(vbe2, vce2);
     
