@@ -27,7 +27,8 @@ public:
               float cbc = 1e-12f,           // Base-collector capacitance
               float rb = 100.0f,            // Base resistance
               float rc = 1.0f,              // Collector resistance
-              float re = 0.1f);             // Emitter resistance
+              float re = 0.1f,              // Emitter resistance
+              float vceSat = 0.2f);         // Collector-emitter saturation voltage
 
     ~Transistor() = default;
 
@@ -41,6 +42,7 @@ public:
     void setBaseResistance(float newRb);// Base resistance
     void setCollectorResistance(float newRc); // Collector resistance
     void setEmitterResistance(float newRe);   // Emitter resistance
+    void setSaturationVoltage(float newVceSat); // Collector-emitter saturation voltage
 
     // Get transistor parameters
     float getBeta() const { return beta; }
@@ -52,6 +54,7 @@ public:
     float getBaseResistance() const { return rb; }
     float getCollectorResistance() const { return rc; }
     float getEmitterResistance() const { return re; }
+    float getSaturationVoltage() const { return vceSat; }
     Type getType() const { return type; }
 
     // Calculate collector current using Ebers-Moll model
@@ -65,6 +68,12 @@ public:
 
     // Calculate Miller effect capacitance
     float calculateMillerCapacitance(float vce, float gain);
+
+    // Calculate saturation voltage
+    float calculateSaturationVoltage(float ib, float ic);
+
+    // Check if transistor is in saturation
+    bool isInSaturation(float vce, float ib, float ic);
 
     // Reset state
     void reset();
@@ -85,6 +94,8 @@ private:
     float lastIc;  // Last collector current
     float lastIb;  // Last base current
     float lastIe;  // Last emitter current
+    float vceSat;  // Collector-emitter saturation voltage
+    float alpha;   // Common-base current gain (alpha = beta/(beta+1))
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Transistor)
 };

@@ -6,8 +6,28 @@ namespace ArchitextureStudiosAnalogCore {
 TransistorClipper::TransistorClipper()
     : inputCap(ArchitextureStudiosAnalogCore::Analog::Capacitor::Type::Film, INPUT_CAP, TEMPERATURE)  // Film cap, 0.056µF
     , diode(ArchitextureStudiosAnalogCore::Analog::Diode::Type::Silicon, TEMPERATURE)  // 1N914 parameters
-    , transistor1(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
-    , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 400.0f, 0.026f, 1e-12f, 100.0f, 293.15f, 1e-12f, 100.0f, 1.0f, 0.1f)  // 2N5088 parameters
+    , transistor1(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN, 
+                 400.0f,    // beta
+                 0.026f,    // vt
+                 1e-12f,    // is
+                 100.0f,    // va
+                 293.15f,   // temp
+                 1e-12f,    // cbc
+                 100.0f,    // rb
+                 1.0f,      // rc
+                 0.1f,      // re
+                 0.15f)     // vceSat - 2N5088 typical saturation voltage
+    , transistor2(ArchitextureStudiosAnalogCore::Analog::Transistor::Type::NPN,
+                 400.0f,    // beta
+                 0.026f,    // vt
+                 1e-12f,    // is
+                 100.0f,    // va
+                 293.15f,   // temp
+                 1e-12f,    // cbc
+                 100.0f,    // rb
+                 1.0f,      // rc
+                 0.1f,      // re
+                 0.15f)     // vceSat - 2N5088 typical saturation voltage
     , biasResistor(BIAS_RESISTANCE, 0.0039, 0.25, 0.5e-12, 0.1e-9)  // Carbon film resistor parameters
     , outputCap(ArchitextureStudiosAnalogCore::Analog::Capacitor::Type::Film, OUTPUT_CAP, TEMPERATURE)  // Film cap, 0.047µF
     , drivePot(100000.0, 0.5, ArchitextureStudiosAnalogCore::Analog::Potentiometer::TaperType::Logarithmic)  // 100k log pot
@@ -51,8 +71,8 @@ float TransistorClipper::processSample(float input)
         juce::Logger::writeToLog("Sample " + juce::String(sampleCounter) + " - Raw input: " + juce::String(input));
     }
     
-    // Amplify input to expected level (around 200mV)
-    double amplifiedInput = input * 40.0;  // Bring up to ~200mV range
+    // Amplify input to expected level
+    double amplifiedInput = input * GAIN;
     
     // Log amplified input
     if (++sampleCounter % 1000 == 0) {
@@ -79,9 +99,9 @@ float TransistorClipper::processSample(float input)
     
     // Log capacitor state
     if (sampleCounter % 1000 == 0) {
-        juce::Logger::writeToLog("Cap current: " + juce::String(capCurrent) + 
-            ", Cap voltage: " + juce::String(capVoltage) +
-            ", Frequency: " + juce::String(frequency));
+        // juce::Logger::writeToLog("Cap current: " + juce::String(capCurrent) + 
+        //     ", Cap voltage: " + juce::String(capVoltage) +
+        //     ", Frequency: " + juce::String(frequency));
     }
     
     // Process through diode to get base voltage
@@ -90,9 +110,9 @@ float TransistorClipper::processSample(float input)
     
     // Log diode state
     if (sampleCounter % 1000 == 0) {
-        juce::Logger::writeToLog("Diode current: " + juce::String(diodeCurrent) + 
-            ", Diode voltage: " + juce::String(diodeVoltage) +
-            ", Input voltage: " + juce::String(capVoltage));
+        // juce::Logger::writeToLog("Diode current: " + juce::String(diodeCurrent) + 
+        //     ", Diode voltage: " + juce::String(diodeVoltage) +
+        //     ", Input voltage: " + juce::String(capVoltage));
     }
     
     // For Darlington pair:
@@ -129,19 +149,19 @@ float TransistorClipper::processSample(float input)
     
     // Log pot output
     if (sampleCounter % 1000 == 0) {
-        juce::Logger::writeToLog("Pot output: " + juce::String(potOutput) + 
-            ", Pot position: " + juce::String(drivePot.getPosition()));
+        // juce::Logger::writeToLog("Pot output: " + juce::String(potOutput) + 
+        //     ", Pot position: " + juce::String(drivePot.getPosition()));
     }
     
     // Check for invalid output
     if (std::isnan(potOutput) || std::isinf(potOutput)) {
-        juce::Logger::writeToLog("ERROR: Invalid output detected: " + juce::String(potOutput));
-        return 0.0f;
+        // juce::Logger::writeToLog("ERROR: Invalid output detected: " + juce::String(potOutput));
+        // return 0.0f;
     }
     
     // Log output level with lower threshold
     if (std::abs(potOutput) > 0.1f) {
-        juce::Logger::writeToLog("Output signal detected: " + juce::String(potOutput));
+        // juce::Logger::writeToLog("Output signal detected: " + juce::String(potOutput));
     }
     
     
