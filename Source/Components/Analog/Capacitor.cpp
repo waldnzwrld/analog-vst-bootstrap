@@ -215,60 +215,33 @@ bool Capacitor::checkPolarity(double voltage) const {
     return voltage >= 0.0;  // Polarized capacitors must have positive voltage
 }
 
-double Capacitor::process(double inputVoltage) {
-    // Get temperature-adjusted values
+double Capacitor::process(double inputVoltage, double frequency) {
+    // Calculate temperature-adjusted values
     double tempAdjustedCap = calculateTemperatureAdjustedCapacitance();
     double tempAdjustedESR = calculateTemperatureAdjustedESR();
     
-    // Calculate frequency from rate of change
-    double frequency = std::abs(inputVoltage - lastVoltage) / (2.0 * M_PI * dt);
-    frequency = std::max(20.0, std::min(frequency, characteristics.maxFrequency)); // Limit to audible range
-    
-    // Calculate capacitive reactance
+    // Calculate total impedance including ESR and ESL
     double xc = 1.0 / (2.0 * M_PI * frequency * tempAdjustedCap);
-    
-    // Calculate total impedance (including ESR and ESL)
-    double xl = 2.0 * M_PI * frequency * esl; // Inductive reactance
+    double xl = 2.0 * M_PI * frequency * esl;
     double totalImpedance = std::sqrt(std::pow(xc, 2) + std::pow(tempAdjustedESR, 2) + std::pow(xl, 2));
     
     // Calculate current using total impedance
     current = (inputVoltage - lastVoltage) / totalImpedance;
     
-    // Check current limit
+    // Check limits
     if (!checkCurrentLimit(current)) {
         current = (current > 0) ? characteristics.maxCurrent : -characteristics.maxCurrent;
     }
     
-    // Check polarity for polarized capacitors
-    if (!checkPolarity(inputVoltage)) {
-        inputVoltage = -0.1;  // Small reverse voltage to prevent damage
-    }
-    
-    // Calculate voltage drop across each component
+    // Calculate voltage drops
     double esrVoltage = current * tempAdjustedESR;
     double eslVoltage = esl * (current - lastCurrent) / dt;
     double xcVoltage = current * xc;
     
-    // Calculate dielectric absorption voltage
-    double daVoltage = calculateDielectricAbsorptionVoltage();
+    // Update voltage including all effects
+    voltage = lastVoltage + xcVoltage + esrVoltage + eslVoltage + calculateDielectricAbsorptionVoltage();
     
-    // Update voltage across capacitor including all effects
-    // The voltage across the capacitor is the sum of all voltage drops
-    voltage = lastVoltage + xcVoltage + esrVoltage + eslVoltage + daVoltage;
-    
-    // Apply frequency-dependent attenuation
-    // This helps model the real-world behavior where higher frequencies are attenuated more
-    double attenuation = 1.0;
-    if (frequency > 1000.0) { // Start attenuating above 1kHz
-        double freqRatio = frequency / 1000.0;
-        attenuation = 1.0 / (1.0 + 0.1 * std::log10(freqRatio)); // Logarithmic attenuation
-    }
-    voltage *= attenuation;
-    
-    // Update DA voltages for next iteration
-    updateDAVoltages(voltage);
-    
-    // Store current values for next iteration
+    // Store state
     lastVoltage = voltage;
     lastCurrent = current;
     

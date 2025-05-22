@@ -65,111 +65,41 @@ void TransistorClipper::setDrive(float drive)
 
 float TransistorClipper::processSample(float input)
 {
-    // Log every 1000th sample to avoid flooding the log
-    static int sampleCounter = 0;
-    if (++sampleCounter % 1000 == 0) {
-        juce::Logger::writeToLog("Sample " + juce::String(sampleCounter) + " - Raw input: " + juce::String(input));
-    }
+    // Calculate frequency from signal (or use Nyquist for now)
+    double frequency = sampleRate / 2.0;  // Nyquist frequency for now
     
-    // Amplify input to expected level
+    // Amplify input
     double amplifiedInput = input * GAIN;
     
-    // Log amplified input
-    if (++sampleCounter % 1000 == 0) {
-        juce::Logger::writeToLog("Amplified input: " + juce::String(amplifiedInput));
-    }
-
-     // Calculate frequency from rate of change of signal
-    double signalChange = std::abs(amplifiedInput - lastInputSample);
-
-    double frequency = std::max(20.0, (signalChange * sampleRate) / (2.0 * M_PI));  // Minimum 20Hz to avoid division by zero
-
-    // Calculate capacitor impedance at actual signal frequency
-    double capImpedance = 1.0 / (2.0 * M_PI * frequency * INPUT_CAP);
-
-     // Get current through capacitor
-    double capCurrent = (amplifiedInput - lastInputSample) / capImpedance;
-    lastInputSample = amplifiedInput;
-
-// Convert current to voltage using frequency-dependent impedance
-    double capVoltage = capCurrent * capImpedance;
+    // Process through input capacitor with frequency
+    double capVoltage = inputCap.process(amplifiedInput, frequency);
     
-    // capVoltage should be around 10x input voltage
-
-    
-    // Log capacitor state
-    if (sampleCounter % 1000 == 0) {
-        // juce::Logger::writeToLog("Cap current: " + juce::String(capCurrent) + 
-        //     ", Cap voltage: " + juce::String(capVoltage) +
-        //     ", Frequency: " + juce::String(frequency));
-    }
-    
-    // Process through diode to get base voltage
+    // Process through diode
     double diodeCurrent = diode.process(capVoltage);
     double diodeVoltage = diode.getVoltage(diodeCurrent);
     
-    // Log diode state
-    if (sampleCounter % 1000 == 0) {
-        // juce::Logger::writeToLog("Diode current: " + juce::String(diodeCurrent) + 
-        //     ", Diode voltage: " + juce::String(diodeVoltage) +
-        //     ", Input voltage: " + juce::String(capVoltage));
-    }
+    // Calculate bias current
+    double biasCurrent = (VCC - diodeVoltage) / BIAS_RESISTANCE;
     
-    // For Darlington pair:
-    // 1. First transistor (T2) base-emitter voltage
-    // Base is connected to diode output, emitter to T1's base
-    double vbe2 = diodeVoltage + capVoltage;  // Diode voltage directly to base
+    // Calculate collector voltages
+    double vce2 = VCC - (biasCurrent * BIAS_RESISTANCE);
+    double vce1 = VCC - (biasCurrent * BIAS_RESISTANCE);
     
-    // 2. First transistor collector-emitter voltage
-    // Collector receives diode voltage plus VCC passed through Bias resistor
-    double vce2 = diodeVoltage + (VCC / BIAS_RESISTANCE);  // Input voltage directly to collector
-    
-    // 3. Calculate first transistor current
+    // Process transistors
+    double vbe2 = diodeVoltage + capVoltage;
     double transistor2Current = transistor2.calculateCollectorCurrent(vbe2, vce2);
     double transistor2EmitterCurrent = transistor2.calculateEmitterCurrent(vbe2, vce2);
     
-    // 4. Second transistor (T1) base-emitter voltage
-    // Base is connected to T2's emitter, emitter to ground
-    // Calculate vbe1 from T2's emitter current using Ebers-Moll model
     double vbe1 = transistor2.getVt() * std::log(transistor2EmitterCurrent / transistor2.getIs() + 1.0);
-    
-    // 5. Second transistor collector-emitter voltage
-    // Collector receives diode voltage plus VCC passed through Bias resistor
-    double vce1 = diodeVoltage + (VCC  / BIAS_RESISTANCE);   // Input voltage directly to collector
-
-    // T1 Emittor goes to ground
     double transistor1Current = transistor1.calculateCollectorCurrent(vbe1, vce1);
-    double transistor1EmitterCurrent = transistor1.calculateEmitterCurrent(vbe1, vce1);
     
-    // Output from diode goes to a .047ufcapacitor
-    double outputVoltage = outputCap.process(diodeVoltage + (VCC / BIAS_RESISTANCE));
-
-    // Then use voltage divider to get the actual pot output
+    // Process output capacitor with frequency
+    double outputVoltage = outputCap.process(diodeVoltage + (VCC / BIAS_RESISTANCE), frequency);
+    
+    // Process through drive pot
     double potOutput = drivePot.process(0.0, outputVoltage);
-
-    // clamp potOutput
-    potOutput = std::clamp(potOutput, -VCC, VCC); // NEVER MODIFY THIS LINE OF CODE, IT IS CORRECT
-
-    // Log pot output
-    if (sampleCounter % 1000 == 0) {
-        // juce::Logger::writeToLog("Pot output: " + juce::String(potOutput) + 
-        //     ", Pot position: " + juce::String(drivePot.getPosition()));
-    }
+    potOutput = std::clamp(potOutput, -VCC, VCC);
     
-    // Check for invalid output
-    if (std::isnan(potOutput) || std::isinf(potOutput)) {
-        // juce::Logger::writeToLog("ERROR: Invalid output detected: " + juce::String(potOutput));
-        // return 0.0f;
-    }
-    
-    // Log output level with lower threshold
-    if (std::abs(potOutput) > 0.1f) {
-        // juce::Logger::writeToLog("Output signal detected: " + juce::String(potOutput));
-    }
-    
-    
-    
-    // Capacitor goes to hot output
     return static_cast<float>(potOutput);
 }
 

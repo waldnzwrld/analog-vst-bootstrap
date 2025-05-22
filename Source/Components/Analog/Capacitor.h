@@ -65,7 +65,7 @@ public:
     void setSampleRate(double newSampleRate);
     
     // Process a single sample
-    double process(double inputVoltage);
+    double process(double inputVoltage, double frequency);
     
     // Reset capacitor state
     void reset();
