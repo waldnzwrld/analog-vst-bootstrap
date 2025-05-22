@@ -1,8 +1,6 @@
 # analog-vst-bootstrap
 
-This is a base level framework for recreating analog style functionality within a VST using modeled variants of electronic components. 
-
-It is a starting point and a playground 
+This is a base level framework for recreating analog style functionality within a VST using modeled variants of electronic components. The project focuses on accurate modeling of analog circuits and their components, with particular attention to the non-linear behaviors that give analog circuits their characteristic sound.
 
 ## Prerequisites
 
@@ -34,19 +32,49 @@ make help
 
 ## Features
 
-- Basic guitar pedal emulation
+- Accurate analog component modeling:
+  - Capacitors with ESR, ESL, and dielectric absorption
+  - Diodes with temperature-dependent behavior
+  - Transistors with full Ebers-Moll model
+  - Resistors with temperature coefficients
+  - Potentiometers with various taper types
+
+- Circuit Implementations:
+  - Transistor-based clipper with Darlington pair
+  - Input/output capacitor coupling
+  - Bias networks
+  - Drive control via potentiometer
+
 - Real-time audio processing
 - VST3 plugin format
 
-## Development
+## Project Structure
 
-This project uses the JUCE framework for audio processing and VST development. The main components are:
+The project is organized into several key components:
 
+### Core Components
+- `Source/Components/Analog/` - Analog component models
+  - `Capacitor.h/cpp` - Capacitor model with ESR, ESL, and dielectric effects
+  - `Diode.h/cpp` - Diode model with temperature effects
+  - `Transistor.h/cpp` - Transistor model using Ebers-Moll equations
+  - `Resistor.h/cpp` - Resistor model with temperature effects
+  - `Potentiometer.h/cpp` - Potentiometer model with various tapers
+
+### Circuit Implementations
+- `Source/Circuits/` - Circuit implementations
+  - `TransistorClipper.h/cpp` - Transistor-based clipper circuit
+
+### Plugin Interface
 - `Source/PluginProcessor.cpp` - Audio processing logic
 - `Source/PluginEditor.cpp` - User interface
 - `Source/PluginProcessor.h` - Plugin processor header
 - `Source/PluginEditor.h` - Plugin editor header
 
-## License
+## Development
 
-MIT License 
+This project uses the JUCE framework for audio processing and VST development. The focus is on accurate modeling of analog components and their interactions within circuits.
+
+Key development areas:
+1. Component Modeling - Adding new components or improving existing models
+2. Circuit Implementation - Creating new circuits or refining existing ones
+3. Plugin Interface - Enhancing the user interface and controls
