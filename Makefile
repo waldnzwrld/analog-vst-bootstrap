@@ -40,4 +40,7 @@ help:
 	@echo "  test       - Runs the test suite"
 	@echo "  help       - Shows this help message"
 
+publish:
+	./scripts/create_package.sh
+
 .PHONY: all configure build clean rebuild run help test 
