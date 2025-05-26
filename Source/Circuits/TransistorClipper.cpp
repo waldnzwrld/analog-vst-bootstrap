@@ -45,7 +45,7 @@ void TransistorClipper::prepare(double newSampleRate)
     inputCap.setSampleRate(sampleRate);
     outputCap.setSampleRate(sampleRate);
     reset();
-    juce::Logger::writeToLog("TransistorClipper prepared with sample rate: " + juce::String(sampleRate));
+
 }
 
 void TransistorClipper::reset()
